@@ -1,6 +1,5 @@
 import torch
 import torch.nn as nn
-from transformers import torch_distributed_zero_first
 from torch import Tensor
 from jaxtyping import Float, Int
 import einops
