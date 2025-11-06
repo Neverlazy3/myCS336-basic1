@@ -26,12 +26,18 @@ from collections import defaultdict, Counter
 
 
 from cs336_basics.myAttenation import MultiHeadSelfAttention, MultiHeadSelfAttentionWithRoPe, ScaledDotProductAttention
+from cs336_basics.myCheckpoint import load_checkpoint, save_checkpoint
+from cs336_basics.myCrossEntropy import cross_entropy
+from cs336_basics.myDataLoad import get_batch
 from cs336_basics.myEmbedding import Embedding
+from cs336_basics.myGradientClipping import gradientClipping
+from cs336_basics.myLearningRate import cosine_annealing_learning_rate
 from cs336_basics.myLinear import Linear
+from cs336_basics.myOptimizer import myAdamW
 from cs336_basics.myRMSNorm import RMSNorm
 from cs336_basics.myRoPE import RoPE
 from cs336_basics.mySoftMax import softmax
-from cs336_basics.mySwiGLU import SwiGLU
+from cs336_basics.mySwiGLU import SiLU, SwiGLU
 from cs336_basics.myTransformerBlock import transformerBlock
 from cs336_basics.myTransformer_lm import Transformer_lm
 
@@ -457,7 +463,8 @@ def run_silu(in_features: Float[Tensor, " ..."]) -> Float[Tensor, " ..."]:
         Float[Tensor,"..."]: of with the same shape as `in_features` with the output of applying
         SiLU to each element.
     """
-    raise NotImplementedError
+    return SiLU(in_features)
+    # raise NotImplementedError
 
 
 def run_get_batch(
@@ -480,6 +487,7 @@ def run_get_batch(
         is the sampled input sequences, and the second tuple item is the corresponding
         language modeling labels.
     """
+    return get_batch(dataset, batch_size, context_length, device)
     raise NotImplementedError
 
 
@@ -515,7 +523,8 @@ def run_cross_entropy(
     Returns:
         Float[Tensor, ""]: The average cross-entropy loss across examples.
     """
-    raise NotImplementedError
+    return cross_entropy(inputs, targets)
+    # raise NotImplementedError
 
 
 def run_gradient_clipping(parameters: Iterable[torch.nn.Parameter], max_l2_norm: float) -> None:
@@ -527,14 +536,17 @@ def run_gradient_clipping(parameters: Iterable[torch.nn.Parameter], max_l2_norm:
 
     The gradients of the parameters (parameter.grad) should be modified in-place.
     """
-    raise NotImplementedError
+    return gradientClipping(parameters, max_l2_norm)
+    # raise NotImplementedError
 
 
 def get_adamw_cls() -> Any:
     """
     Returns a torch.optim.Optimizer that implements AdamW.
     """
-    raise NotImplementedError
+    adamw = myAdamW
+    return adamw
+    # raise NotImplementedError
 
 
 def run_get_lr_cosine_schedule(
@@ -562,7 +574,8 @@ def run_get_lr_cosine_schedule(
     Returns:
         Learning rate at the given iteration under the specified schedule.
     """
-    raise NotImplementedError
+    return cosine_annealing_learning_rate(it, max_learning_rate, min_learning_rate, warmup_iters, cosine_cycle_iters)
+    # raise NotImplementedError
 
 
 def run_save_checkpoint(
@@ -581,7 +594,8 @@ def run_save_checkpoint(
             we've completed.
         out (str | os.PathLike | BinaryIO | IO[bytes]): Path or file-like object to serialize the model, optimizer, and iteration to.
     """
-    raise NotImplementedError
+    save_checkpoint(model, optimizer, iteration, out)
+    # raise NotImplementedError
 
 
 def run_load_checkpoint(
@@ -602,7 +616,8 @@ def run_load_checkpoint(
     Returns:
         int: the previously-serialized number of iterations.
     """
-    raise NotImplementedError
+    return load_checkpoint(src, model, optimizer)
+    # raise NotImplementedError
 
 
 def get_tokenizer(
